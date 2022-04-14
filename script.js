@@ -1,9 +1,9 @@
 let nomeObj = {}
 let mensagem = {
-    from:"",
-    to:"",
-    text:"",
-    type:""
+    from: "",
+    to: "",
+    text: "",
+    type: ""
 }
 function entrarNaSala() {
     const nome = document.querySelector(".tela-entrada input").value;
@@ -11,13 +11,16 @@ function entrarNaSala() {
     let promise = axios.post('https://mock-api.driven.com.br/api/v6/uol/participants', nomeObj);
     promise.then(aparecerChat);
     promise.catch(tratarErro);
-    document.querySelector(".tela-entrada input").value="";
+    document.querySelector(".tela-entrada input").value = "";
 }
 
 function aparecerChat() {
     document.querySelector(".tela-entrada").classList.add("escondido");
+    refrescarChat();
+    atualizarContatos();
     let IDinterval = setInterval(manterStatus, 4000);
-    let IDinterval2 = setInterval(refrescarChat,3000);
+    let IDinterval2 = setInterval(refrescarChat, 3000);
+    let IDinterval3 = setInterval(atualizarContatos,10000);
 }
 function tratarErro(erro) {
     let codigo = erro.response.status;
@@ -25,7 +28,7 @@ function tratarErro(erro) {
         alert("Já existe um usuário online com esse nome.\nPor favor escolha outro nome.");
     }
 }
-function atualizarPagina(){
+function atualizarPagina() {
     window.location.reload();
 }
 function manterStatus() {
@@ -34,6 +37,10 @@ function manterStatus() {
 function refrescarChat() {
     let promise = axios.get('https://mock-api.driven.com.br/api/v6/uol/messages');
     promise.then(renderizarMsgs);
+}
+function atualizarContatos(){
+    let promise = axios.get('https://mock-api.driven.com.br/api/v6/uol/participants');
+    promise.then(renderizarContatos);
 }
 function renderizarMsgs(response) {
     let MsgPrevia = document.querySelector(".container > div:last-child > p");
@@ -53,47 +60,91 @@ function renderizarMsgs(response) {
 </div>`
     }
     let MsgNova = document.querySelector(".container > div:last-child > p");
-    if(MsgPrevia===null){
+    if (MsgPrevia === null) {
         MsgNova.scrollIntoView();
-    }else if(MsgNova.innerHTML!==MsgPrevia.innerHTML){
+    } else if (MsgNova.innerHTML !== MsgPrevia.innerHTML) {
         MsgNova.scrollIntoView();
     }
 }
-function enviarMensagem() {
-    const conteudo = document.querySelector(".rodape input").value;
-mensagem.from=nomeObj.name;
-if(mensagem.to===""){mensagem.to="Todos"}
-mensagem.text=conteudo;
-if(mensagem.type===""){mensagem.type="message"}
-let promise = axios.post('https://mock-api.driven.com.br/api/v6/uol/messages', mensagem);
-    promise.then(refrescarChat);
-    promise.catch(atualizarPagina);
-    document.querySelector(".rodape input").value="";
+
+function renderizarContatos(response) {
+    let contatoSelect = document.querySelector(".contatos .selecionado");
+    const nomeSelect = contatoSelect.parentNode.querySelector("p").innerHTML;
+    let manterSelect = "";
+    if (nomeSelect === "Todos") { manterSelect = " selecionado"}
+    let contatos = document.querySelector(".contatos");
+    contatos.innerHTML = `<div onclick="selecionarContato(this)">
+<ion-icon name="people"></ion-icon>
+<p>Todos</p>
+<ion-icon class="check${manterSelect}" name="checkmark-outline"></ion-icon>
+</div>`;
+    for (let i = 0; i < response.data.length; i++) {
+        manterSelect = "";
+        if (nomeSelect === response.data[i].name) { manterSelect = " selecionado" }
+        contatos.innerHTML += `<div onclick="selecionarContato(this)">
+<ion-icon name="person-circle"></ion-icon>
+<p>${response.data[i].name}</p>
+<ion-icon class="check${manterSelect}" name="checkmark-outline"></ion-icon>
+</div>`
+    }
 }
-function aparecerMenu(){
+function aparecerMenu() {
+    atualizarContatos();
     document.querySelector(".caixa-menu").classList.remove("escondido");
 }
-function desaparecerMenu(){
+function desaparecerMenu() {
     document.querySelector(".caixa-menu").classList.add("escondido");
 }
 
-function selecionarContato(element){
-    let listaContatos = document.querySelectorAll(".contatos .check");
-    for(let i=0;i<listaContatos.length;i++){
-    listaContatos[i].classList.add("escondido");
-    }
-    element.querySelector(".check").classList.remove("escondido");
-    let novoContato = element.querySelector("p").innerHTML;
-    mensagem.to=novoContato
+function enviarMensagem() {
+    const conteudo = document.querySelector(".rodape input").value;
+    mensagem.from = nomeObj.name;
+    if (mensagem.to === "") { mensagem.to = "Todos" }
+    mensagem.text = conteudo;
+    if (mensagem.type === "") { mensagem.type = "message" }
+    let promise = axios.post('https://mock-api.driven.com.br/api/v6/uol/messages', mensagem);
+    promise.then(refrescarChat);
+    promise.catch(atualizarPagina);
+    document.querySelector(".rodape input").value = "";
 }
 
-function selecionarVisib(element){
-    let listaVisib = document.querySelectorAll(".visibilidade .check");
-    for(let i=0;i<listaVisib.length;i++){
-        listaVisib[i].classList.add("escondido");
-        }
-        element.querySelector(".check").classList.remove("escondido");
-        let novaVisib = element.querySelector("p").innerHTML;
-        if(novaVisib==="Reservadamente"){mensagem.type="private_message"}
-        if(novaVisib==="Público"){mensagem.type="message"}
+function selecionarContato(element) {
+    let listaContatos = document.querySelectorAll(".contatos .check");
+    for (let i = 0; i < listaContatos.length; i++) {
+        listaContatos[i].classList.remove("selecionado");
     }
+    element.querySelector(".check").classList.add("selecionado");
+    let novoContato = element.querySelector("p").innerHTML;
+    mensagem.to = novoContato;
+    let descricao = document.querySelector(".rodape p");
+    if(mensagem.to!=="Todos"){ 
+        descricao.innerHTML=`Enviando para ${mensagem.to}`;
+        if(mensagem.type==="private_message") {
+            descricao.innerHTML += " (reservadamente)";
+        }
+    }else{
+        descricao.innerHTML=" ";
+    }
+}
+
+function selecionarVisib(element) {
+    let listaVisib = document.querySelectorAll(".visibilidade .check");
+    for (let i = 0; i < listaVisib.length; i++) {
+        listaVisib[i].classList.remove("selecionado");
+    }
+    element.querySelector(".check").classList.add("selecionado");
+    let novaVisib = element.querySelector("p").innerHTML;
+    let descricao = document.querySelector(".rodape p");
+    if (novaVisib === "Reservadamente") { 
+        mensagem.type = "private_message";
+        if(mensagem.to!=="Todos"){
+            descricao.innerHTML += " (reservadamente)";
+        }
+     }
+    if (novaVisib === "Público") { 
+        mensagem.type = "message";
+        if(mensagem.to!=="Todos"){
+            descricao.innerHTML = `Enviando para ${mensagem.to}`;
+        }
+    }
+}

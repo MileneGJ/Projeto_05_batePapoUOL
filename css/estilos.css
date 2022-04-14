@@ -2,7 +2,7 @@ body{
     font-family: 'Roboto', sans-serif;
     background-color: #F3F3F3;
 }
-.escondido,.tela-entrada.escondido,.caixa-menu.escondido{
+.tela-entrada.escondido,.caixa-menu.escondido{
     display: none;
 }
 .tela-entrada{
@@ -77,6 +77,12 @@ color: #696969;
     font-size: 18px;
     color:#000000;
     font-style: italic;
+    width:250px;
+}
+.rodape p{
+    margin-top:10px;
+    color:gray;
+    font-size:12px;
 }
 .container{
     margin:106px 0;
@@ -124,6 +130,7 @@ strong{
     width:40%;
 }
 .caixa-menu .menu-lateral{
+    overflow-y: scroll;
     width: 60%;
     display:flex;
     flex-direction: column;
@@ -136,12 +143,16 @@ strong{
     margin-right: 5px;
 }
 .menu-lateral .check{
+    display:none;
     color:#28BB25;
     font-size: 15px;
     --ionicon-stroke-width: 100px;
     position:absolute;
     right:5px;
     top:10px;
+}
+.menu-lateral .selecionado{
+    display:inline;
 }
 .menu-lateral div div{
     display:flex;
