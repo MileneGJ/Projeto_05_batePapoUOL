@@ -79,7 +79,7 @@ color: #696969;
     font-style: italic;
 }
 .container{
-    margin-top:106px;
+    margin:106px 0;
     width:100%;
 }
 .container div{
@@ -93,7 +93,7 @@ color: #696969;
 .container .status{
     background-color: #DCDCDC;
 }
-.container .msg-privada{
+.container .private_message{
     background-color: #FFDEDE;
 }
 .container p{
