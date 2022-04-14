@@ -26,8 +26,7 @@ function refrescarChat() {
     promise.then(renderizarMsgs);
 }
 function renderizarMsgs(response) {
-    let MsgPrevia = document.querySelector(".container div:last-child");
-    alert(MsgPrevia.innerHTML);
+    let MsgPrevia = document.querySelector(".container > div:last-child > p");
     let chat = document.querySelector(".container");
     chat.innerHTML = "";
     for (let i = 0; i < response.data.length; i++) {
@@ -43,8 +42,9 @@ function renderizarMsgs(response) {
     <p>  <strong>${response.data[i].from}</strong> ${complemento} ${response.data[i].text}</p>        
 </div>`
     }
-    let MsgNova = document.querySelectorAll(".container div:last-child");
+    let MsgNova = document.querySelector(".container > div:last-child > p");
     if(MsgNova.innerHTML!==MsgPrevia.innerHTML){
+        alert("Mensagem nova!!");
         MsgNova.scrollIntoView();
     }
 }
