@@ -20,7 +20,7 @@ function aparecerChat() {
     atualizarContatos();
     let IDinterval = setInterval(manterStatus, 4000);
     let IDinterval2 = setInterval(refrescarChat, 3000);
-    let IDinterval3 = setInterval(atualizarContatos,10000);
+    let IDinterval3 = setInterval(atualizarContatos, 10000);
 }
 function tratarErro(erro) {
     let codigo = erro.response.status;
@@ -38,7 +38,7 @@ function refrescarChat() {
     let promise = axios.get('https://mock-api.driven.com.br/api/v6/uol/messages');
     promise.then(renderizarMsgs);
 }
-function atualizarContatos(){
+function atualizarContatos() {
     let promise = axios.get('https://mock-api.driven.com.br/api/v6/uol/participants');
     promise.then(renderizarContatos);
 }
@@ -47,17 +47,22 @@ function renderizarMsgs(response) {
     let chat = document.querySelector(".container");
     chat.innerHTML = "";
     for (let i = 0; i < response.data.length; i++) {
-        let complemento = "";
-        if (response.data[i].type === "message") {
-            complemento = `para <strong>${response.data[i].to}</strong>:`;
-        }
-        if (response.data[i].type === "private_message") {
-            complemento = `reservadamente para <strong>${response.data[i].to}</strong>:`;
-        }
-        chat.innerHTML += `<div class="${response.data[i].type}">
+        if (response.data[i].type === "private_message" &&
+            (response.data[i].from !== nomeObj.name &&
+                response.data[i].to !== nomeObj.name)) {
+        } else {
+            let complemento = "";
+            if (response.data[i].type === "message") {
+                complemento = `para <strong>${response.data[i].to}</strong>:`;
+            }
+            if (response.data[i].type === "private_message") {
+                complemento = `reservadamente para <strong>${response.data[i].to}</strong>:`;
+            }
+            chat.innerHTML += `<div class="${response.data[i].type}">
     <p class="tempo">(${response.data[i].time})</p> 
     <p>  <strong>${response.data[i].from}</strong> ${complemento} ${response.data[i].text}</p>        
 </div>`
+        }
     }
     let MsgNova = document.querySelector(".container > div:last-child > p");
     if (MsgPrevia === null) {
@@ -71,7 +76,7 @@ function renderizarContatos(response) {
     let contatoSelect = document.querySelector(".contatos .selecionado");
     const nomeSelect = contatoSelect.parentNode.querySelector("p").innerHTML;
     let manterSelect = "";
-    if (nomeSelect === "Todos") { manterSelect = " selecionado"}
+    if (nomeSelect === "Todos") { manterSelect = " selecionado" }
     let contatos = document.querySelector(".contatos");
     contatos.innerHTML = `<div onclick="selecionarContato(this)">
 <ion-icon name="people"></ion-icon>
@@ -98,14 +103,16 @@ function desaparecerMenu() {
 
 function enviarMensagem() {
     const conteudo = document.querySelector(".rodape input").value;
-    mensagem.from = nomeObj.name;
-    if (mensagem.to === "") { mensagem.to = "Todos" }
-    mensagem.text = conteudo;
-    if (mensagem.type === "") { mensagem.type = "message" }
-    let promise = axios.post('https://mock-api.driven.com.br/api/v6/uol/messages', mensagem);
-    promise.then(refrescarChat);
-    promise.catch(atualizarPagina);
-    document.querySelector(".rodape input").value = "";
+    if (conteudo === null) { } else {
+        mensagem.from = nomeObj.name;
+        if (mensagem.to === "") { mensagem.to = "Todos" }
+        mensagem.text = conteudo;
+        if (mensagem.type === "") { mensagem.type = "message" }
+        let promise = axios.post('https://mock-api.driven.com.br/api/v6/uol/messages', mensagem);
+        promise.then(refrescarChat);
+        promise.catch(atualizarPagina);
+        document.querySelector(".rodape input").value = "";
+    }
 }
 
 function selecionarContato(element) {
@@ -117,13 +124,13 @@ function selecionarContato(element) {
     let novoContato = element.querySelector("p").innerHTML;
     mensagem.to = novoContato;
     let descricao = document.querySelector(".rodape p");
-    if(mensagem.to!=="Todos"){ 
-        descricao.innerHTML=`Enviando para ${mensagem.to}`;
-        if(mensagem.type==="private_message") {
+    if (mensagem.to !== "Todos") {
+        descricao.innerHTML = `Enviando para ${mensagem.to}`;
+        if (mensagem.type === "private_message") {
             descricao.innerHTML += " (reservadamente)";
         }
-    }else{
-        descricao.innerHTML=" ";
+    } else {
+        descricao.innerHTML = " ";
     }
 }
 
@@ -135,15 +142,15 @@ function selecionarVisib(element) {
     element.querySelector(".check").classList.add("selecionado");
     let novaVisib = element.querySelector("p").innerHTML;
     let descricao = document.querySelector(".rodape p");
-    if (novaVisib === "Reservadamente") { 
+    if (novaVisib === "Reservadamente") {
         mensagem.type = "private_message";
-        if(mensagem.to!=="Todos"){
+        if (mensagem.to !== "Todos") {
             descricao.innerHTML += " (reservadamente)";
         }
-     }
-    if (novaVisib === "Público") { 
+    }
+    if (novaVisib === "Público") {
         mensagem.type = "message";
-        if(mensagem.to!=="Todos"){
+        if (mensagem.to !== "Todos") {
             descricao.innerHTML = `Enviando para ${mensagem.to}`;
         }
     }
