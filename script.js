@@ -5,8 +5,26 @@ let mensagem = {
     text: "",
     type: ""
 }
+
+const inputEntrada = document.querySelector(".tela-entrada input");
+inputEntrada.addEventListener("keydown",function (event){
+    if(event.keyCode===13){
+        document.querySelector(".tela-entrada button").click();
+    }
+});
+const inputMsg = document.querySelector(".rodape input");
+inputMsg.addEventListener("keydown",function (event){
+    if(event.keyCode===13){
+        document.querySelector(".rodape ion-icon").click();
+    }
+});
+
+
 function entrarNaSala() {
-    const nome = document.querySelector(".tela-entrada input").value;
+    let inputEntrada = document.querySelector(".tela-entrada input");
+    const nome = inputEntrada.value;
+    document.querySelector(".entrada").classList.add("escondido");
+    document.querySelector(".carregando").classList.remove("escondido");
     nomeObj = { name: nome };
     let promise = axios.post('https://mock-api.driven.com.br/api/v6/uol/participants', nomeObj);
     promise.then(aparecerChat);
@@ -27,6 +45,9 @@ function tratarErro(erro) {
     if (codigo === 400) {
         alert("Já existe um usuário online com esse nome.\nPor favor escolha outro nome.");
     }
+    document.querySelector(".entrada").classList.remove("escondido");
+    document.querySelector(".carregando").classList.add("escondido");
+ 
 }
 function atualizarPagina() {
     window.location.reload();
@@ -114,6 +135,7 @@ function enviarMensagem() {
         document.querySelector(".rodape input").value = "";
     }
 }
+
 
 function selecionarContato(element) {
     let listaContatos = document.querySelectorAll(".contatos .check");
