@@ -15,6 +15,9 @@
 </head>
 
 <body>
+
+    <!-- Tela de entrada -->
+
     <div class="tela-entrada">
         <img src="./imagens/logo 2.png">
         <div class="entrada">
@@ -26,6 +29,11 @@
             <p>Entrando...</p>
         </div>
     </div>
+    <!-- Tela de entrada -->
+
+
+    <!-- Chat Principal-->
+
     <div class="barra topo">
         <img src="./imagens/logo 1.png">
         <ion-icon name="people" onclick="aparecerMenu()"></ion-icon>
@@ -39,6 +47,11 @@
         </div>
         <ion-icon name="paper-plane-outline" onclick="enviarMensagem()"></ion-icon>
     </div>
+    <!-- Chat Principal-->
+
+
+    <!-- Menu Lateral -->
+
     <div class="caixa-menu escondido">
         <div onclick="desaparecerMenu()"></div>
         <div class="menu-lateral">
@@ -50,8 +63,8 @@
                     <ion-icon class="check selecionado" name="checkmark-outline"></ion-icon>
                 </div>
             </div>
+            <h1>Escolha a visibilidade:</h1>
             <div class="visibilidade">
-                <h1>Escolha a visibilidade:</h1>
                 <div onclick="selecionarVisib(this)">
                     <ion-icon name="lock-open"></ion-icon>
                     <p>Público</p>
@@ -63,12 +76,15 @@
                     <ion-icon class="check" name="checkmark-outline"></ion-icon>
                 </div>
             </div>
-
         </div>
-        <script type="module" src="https://unpkg.com/ionicons@5.4.0/dist/ionicons/ionicons.esm.js"></script>
-        <script nomodule="" src="https://unpkg.com/ionicons@5.4.0/dist/ionicons/ionicons.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-        <script src="./script.js"></script>
+    </div>
+    <!-- Menu Lateral -->
+
+
+    <script type="module" src="https://unpkg.com/ionicons@5.4.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule="" src="https://unpkg.com/ionicons@5.4.0/dist/ionicons/ionicons.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="./script.js"></script>
 </body>
 
 </html>
