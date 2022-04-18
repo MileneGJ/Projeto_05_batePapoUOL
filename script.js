@@ -207,8 +207,9 @@ function desaparecerMenu() {
 function selecionarContato(element) {
     // Limpar o contato selecionado previamente
     let ContatoAnterior = document.querySelector(".contatos .selecionado");
+    if(ContatoAnterior!==null){
     ContatoAnterior.classList.remove("selecionado");
-
+    }
     // Selecionar o contato atual
     element.querySelector(".check").classList.add("selecionado");
 
